@@ -33,7 +33,7 @@ The diagram below presents the hardware architecture and subsystem interconnecti
 
 
 <p align="center">
-  <img src="Photos/Block_Diagram.jpg" alt="System Firmware Execution Flowchart" width="550">
+  <img src="Photos/Block_Diagram.jpg" alt="System Firmware Execution Flowchart" width="900">
 </p>
 
 ---
@@ -65,7 +65,7 @@ This mode is mainly used for:
     </td>
 
     <td>
-      <img src="Photos/Flowchart.jpg" width="700"/>
+      <img src="Photos/Flowchart.jpg" width="1100"/>
     </td>
   </tr>
 </table>
@@ -163,7 +163,7 @@ Sends robot status updates to the dashboard:
     </td>
 
     <td>
-      <img src="Photos/communication_flowchart.png" width="250"/>
+      <img src="Photos/communication_flowchart.png" width="400"/>
     </td>
   </tr>
 </table>
@@ -174,10 +174,10 @@ Sends robot status updates to the dashboard:
 <table>
   <tr>
     <td>
-      <img src="Photos/site_photo.png" width="370"/>
+      <img src="Photos/site_photo.png" width="720"/>
     </td>
     <td>
-      <img src="Photos/site_photo_2.png" width="400"/>
+      <img src="Photos/site_photo_2.png" width="750"/>
     </td>
   </tr>
 </table>
@@ -188,7 +188,7 @@ Sends robot status updates to the dashboard:
 The electrical subsystem interconnections, hardware dependencies, and module abstractions are validated prior to physical prototyping development.
 
 <p align="center">
-  <img src="Photos/simulation_circuit.jpg" alt="System Circuit Schematic Simulation" width="700">
+  <img src="Photos/simulation_circuit.jpg" alt="System Circuit Schematic Simulation" width="900">
 </p>
 
 ---
@@ -223,11 +223,7 @@ The electrical subsystem interconnections, hardware dependencies, and module abs
   - Works well with smaller datasets
   - High accuracy
 
-**Model Architecture:**
-```python
-base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='imagenet')
-GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_classes, softmax)
-```
+
 
   **Training Results**
   - Train Accuracy: **95.78%**
@@ -236,7 +232,7 @@ GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_cla
     </td>
 
     <td>
-      <img src="Photos/AI_comparasion.jpg" width="1000"/>
+      <img src="Photos/AI_comparasion.jpg" width="500"/>
     </td>
   </tr>
 </table>
@@ -260,10 +256,10 @@ GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_cla
 <table>
   <tr>
     <td>
-      <img src="Photos/AI_1.jpg" width="370"/>
+      <img src="Photos/AI_1.jpg" width="670"/>
     </td>
     <td>
-      <img src="Photos/AI_2.jpg" width="400"/>
+      <img src="Photos/AI_2.jpg" width="800"/>
     </td>
   </tr>
 </table>
@@ -336,10 +332,10 @@ mqtt_client.publish("material", predicted_label)
 <table>
   <tr>
     <td>
-      <img src="Photos/side_view.jpeg" width="400"/>
+      <img src="Photos/side_view.jpeg" width="1000"/>
     </td>
     <td>
-      <img src="Photos/plan_view.jpeg" width="270"/>
+      <img src="Photos/plan_view.jpeg" width="670"/>
     </td>
   </tr>
 </table>
