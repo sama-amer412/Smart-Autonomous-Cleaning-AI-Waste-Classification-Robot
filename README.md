@@ -33,7 +33,7 @@ The diagram below presents the hardware architecture and subsystem interconnecti
 
 
 <p align="center">
-  <img src="Block_Diagram.jpg" alt="System Firmware Execution Flowchart" width="550">
+  <img src="Photos/Block_Diagram.jpg" alt="System Firmware Execution Flowchart" width="550">
 </p>
 
 ---
