@@ -31,6 +31,7 @@ An IoT-based autonomous cleaning robot that integrates embedded systems, artific
 
 The diagram below presents the hardware architecture and subsystem interconnections of the smart cleaning robot.
 
+
 <p align="center">
   <img src="Photos/Block_Diagram.jpg" alt="System Firmware Execution Flowchart" width="550">
 </p>
@@ -38,139 +39,412 @@ The diagram below presents the hardware architecture and subsystem interconnecti
 ---
 
 ## ⚙️ System Operation Modes
-
 The robot supports two operational modes controlled remotely through the MQTT cloud dashboard.
-
----
+<table>
+  <tr>
+    <td>
 
 ### 1️⃣ Manual Mode
 
-| Description | Flowchart |
-|------------|----------|
-| In **Manual Mode**, the user can directly control the robot movement and cleaning modules through the web dashboard interface. <br><br> **Supported Controls:** <br> - Forward / Backward Movement <br> - Left / Right Turning <br> - Stop <br> - Water Pump Control <br> - Cleaning Module Activation <br><br> **Use Cases:** <br> - Direct navigation <br> - System testing <br> - Manual cleaning operation | <img src="Photos/Flowchart.jpg" width="300"> |
+In **Manual Mode**, the user can directly control the robot movement and cleaning modules through the web dashboard interface.
 
----
+#### 🎮 Supported Controls
+
+- Forward / Backward Movement
+- Left / Right Turning
+- Stop
+- Water Pump Control
+- Cleaning Module Activation
+
+This mode is mainly used for:
+
+- Direct navigation
+- System testing
+- Manual cleaning operation
+
+    </td>
+
+    <td>
+      <img src="Photos/Flowchart.jpg" width="700"/>
+    </td>
+  </tr>
+</table>
+
+
+
 
 ### 2️⃣ Autonomous Mode
 
 In **Autonomous Mode**, the robot performs intelligent navigation and periodic cleaning automatically without user intervention.
 
+
+
 #### 🔹 Autonomous Navigation
 
 The robot continuously monitors its surroundings using:
 
-- HC-SR04 Ultrasonic Sensor  
-- Left & Right IR Obstacle Sensors  
-- IR Edge Detection Sensor  
+- HC-SR04 Ultrasonic Sensor
+- Left & Right IR Obstacle Sensors
+- IR Edge Detection Sensor
 
 #### 🧠 Navigation Logic
 
-- Edge detection has the highest priority to prevent falling from edges or stairs  
-- Obstacles are avoided using real-time distance evaluation  
-- The robot dynamically changes direction based on sensor feedback  
+- Edge detection has the highest priority to prevent falling from edges or stairs.
+- Obstacles are avoided using real-time distance evaluation.
+- The robot dynamically changes direction based on sensor feedback.
 
 ▶️ **Watch Demo:**  
 [Watch Video](videos/avoidnace.mp4)
 
----
-
-### 🧼 Multi-Stage Cleaning Cycle
+#### 🧼 Multi-Stage Cleaning Cycle
 
 The cleaning system is implemented using a **non-blocking embedded state machine**, allowing cleaning operations and autonomous navigation to run simultaneously.
 
-| Stage | Function | Relay Status | System Action |
-|------|----------|--------------|----------------|
-| Stage 1 | Vacuum Cleaning | Pump OFF / Mop OFF / Fan ON | Dust collection and suction fan operation while moving |
-| Stage 2 | Water Spraying | Pump ON / Mop OFF | Activates water pump for wet cleaning |
-| Stage 3 | Mopping | Pump OFF / Mop ON | Mop motor scrubs the surface |
+| Stage | Function |Relay Status   | System Action |
+|---|---|---|---|
+| Stage 1 | Vacuum Cleaning |Pump Relay: **OFF**<br>Mop Relay: **OFF**<br>Fan: **ON**  | Dust collection and suction fan operation while moving |
+| Stage 2 | Water Spraying | Pump Relay: **ON**<br>Mop Relay: **OFF**  | Activates the water pump for wet-cleaning preparation |
+| Stage 3 | Mopping |Pump Relay: **OFF**<br>Mop Relay: **ON**  | Mop motor scrubs the surface during controlled movement |
 
-#### ✅ End of Cycle
-- Cleaning modules are disabled  
-- Buzzer alert is triggered  
-- Robot returns to autonomous mode  
+#### ✅ End of Cleaning Cycle
+
+At the end of each cleaning cycle:
+
+- Cleaning modules are disabled
+- A buzzer alert is triggered
+- The robot returns to autonomous navigation mode
 
 ▶️ **Watch Demo:**  
 [Watch Video](videos/avoidnace&cycle.mp4)
 
+
+
 ---
+
 
 ## 🌐 Interactive Web Dashboard & Real-Time Cloud Communication
 
-The robot is controlled through a responsive web dashboard using **HTML, CSS, and JavaScript**, with MQTT cloud communication.
+The robot is controlled through a responsive web dashboard designed using **HTML, CSS, and JavaScript**, providing a simple and intuitive user experience. The system enables real-time communication with the robot using MQTT over a cloud-based broker, allowing instant command execution without page refresh.
 
----
+
 
 ### ⚙️ Key Features
 
-- Manual & Automatic modes  
-- Configurable automatic timer  
-- Real-time battery monitoring  
-- Password security system  
+- Manual Mode and Automatic Mode  
+- Automatic Mode includes configurable timer  
+- Battery monitoring displaying real-time battery level on the dashboard  
+- Password change option for dashboard access security  
 
----
+
 
 ### 💡 System Overview
 
-The dashboard is the main control interface, sending commands via MQTT broker and receiving live status updates.
+The dashboard acts as the main control interface for the robot, where user commands are sent directly to the cloud and executed instantly by the robot, while system status is returned in real time.
 
----
+
 
 ### ☁️ MQTT Cloud Communication Logic
 
-| MQTT Topic | Direction | Function |
-|------------|----------|----------|
-| robot/control | Subscribe | Receives movement + mode commands |
-| robot/telemetry | Publish | Sends battery + system status |
+<table>
+  <tr>
+    <td>
 
-<p align="center">
-  <img src="Photos/communication_flowchart.png" width="200">
-</p>
+The system uses **MQTT (Message Queuing Telemetry Transport)**, a lightweight publish/subscribe protocol that enables efficient and structured communication between the dashboard and the robot through a cloud broker.
 
----
+**robot/control (Subscribe)**  
+Receives control commands from the dashboard:
+- Mode selection (Manual / Automatic)  
+- Movement commands (Forward, Backward, Left, Right, Stop)
+
+**robot/telemetry (Publish)**  
+Sends robot status updates to the dashboard:
+- Battery level , System state  
+
+    </td>
+
+    <td>
+      <img src="Photos/communication_flowchart.png" width="250"/>
+    </td>
+  </tr>
+</table>
 
 ### 🖼️ Dashboard Preview
 
-| Dashboard View 1 | Dashboard View 2 |
-|------------------|------------------|
-| <img src="Photos/site_photo.png" width="350"> | <img src="Photos/site_photo_2.png" width="350"> |
+
+<table>
+  <tr>
+    <td>
+      <img src="Photos/site_photo.png" width="370"/>
+    </td>
+    <td>
+      <img src="Photos/site_photo_2.png" width="400"/>
+    </td>
+  </tr>
+</table>
 
 ---
-
 ## 🔌 Hardware Configurations & Diagrams
 
-The electrical subsystem interconnections and hardware validation before prototyping.
+The electrical subsystem interconnections, hardware dependencies, and module abstractions are validated prior to physical prototyping development.
 
 <p align="center">
-  <img src="Photos/simulation_circuit.jpg" width="700">
+  <img src="Photos/simulation_circuit.jpg" alt="System Circuit Schematic Simulation" width="700">
 </p>
 
 ---
-
 ## 🧠 AI Waste Classification Model (Software Layer)
 
 ### **AI System Overview**
+- **Recycle Waste Classifier**: Real-time waste classification system using Deep Learning & Computer Vision
+- Classifies waste into: **Plastic, Glass, Metal, Paper, Shoes/Other**
+- Built with **TensorFlow** and integrated into **Streamlit** web application
 
-- Recycle Waste Classifier using Deep Learning  
-- Classes: Plastic, Glass, Metal, Paper, Shoes/Other  
-- Built with TensorFlow + Streamlit  
-
----
-
-### **Project Evolution**
-
-- Custom CNN → ~66% accuracy  
-- MobileNetV2 → ~90%+ accuracy (final model)  
+#### **Project Evolution**
+- Started with **Custom CNN** model built from scratch
+- Achieved only **~66% accuracy**, slow training, and unstable real-time performance
+- Switched to **MobileNetV2 Transfer Learning** to overcome limitations
+- Result: Significant improvement to **~90%+ accuracy**, faster training, and better stability
 
 ---
+
+
+
 
 ### **Deep Learning Model**
 
-- MobileNetV2 Transfer Learning  
-- Lightweight and optimized for real-time  
+<table>
+  <tr>
+    <td>
 
+- Used **MobileNetV2** with Transfer Learning (pre-trained on ImageNet)
+- **Why MobileNetV2?**
+  - Lightweight & fast for real-time use
+  - Efficient on limited hardware
+  - Works well with smaller datasets
+  - High accuracy
+
+**Model Architecture:**
 ```python
-base_model = MobileNetV2(input_shape=(224, 224, 3),
-                          include_top=False,
-                          weights='imagenet')
-
+base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='imagenet')
 GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_classes, softmax)
+```
+
+  **Training Results**
+  - Train Accuracy: **95.78%**
+  - **Validation Accuracy**: **90.06%**
+
+    </td>
+
+    <td>
+      <img src="Photos/AI_comparasion.jpg" width="1000"/>
+    </td>
+  </tr>
+</table>
+
+  
+
+---
+
+  ### **Streamlit Web Interface**
+- Supports: Image upload, Live camera detection, Confidence scores
+- Clean and interactive UI
+- Displays prediction + probability distribution
+
+
+**System Examples:**
+
+- **Paper** → Confidence: **0.66**
+- **Glass** → Confidence: **0.88**
+- **Plastic** → Confidence: **1.00**
+
+<table>
+  <tr>
+    <td>
+      <img src="Photos/AI_1.jpg" width="370"/>
+    </td>
+    <td>
+      <img src="Photos/AI_2.jpg" width="400"/>
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+---
+
+### **Live Camera Processing**
+- Used **`streamlit-webrtc`** for smooth real-time streaming
+- Applied **Frame Skipping** (`if frame_count % 10 == 0`) to reduce latency
+- Achieved stable live classification
+
+This video shows real-time waste classification using the live camera stream with MobileNetV2.
+
+▶️ **Watch Demo:**  
+[Watch Video](videos/AI.mp4)
+---
+
+### **Cloud Communication (MQTT)**
+- Used **MQTT Protocol** for communication with robotic arm
+- Lightweight, fast, and ideal for IoT
+- Sends prediction results in real-time:
+```python
+mqtt_client.publish("material", predicted_label)
+```
+
+---
+
+### **Model Comparison**
+
+| Feature                  | Custom CNN     | **MobileNetV2** (Final) |
+|--------------------------|----------------|--------------------------|
+| Accuracy                 | ~66%           | **~90%+**                |
+| Training Speed           | Slow           | **Much Faster**          |
+| Stability                | Less stable    | **Highly Stable**        |
+| Dataset Requirement      | Large          | **Limited data**         |
+| Real-Time Performance    | Poor           | **Optimized**            |
+
+---
+
+## 🔌 Hardware Components & System Roles
+
+| Hardware Component | Function in System |
+|-------------------|------------------|
+| **Arduino Uno** | Main microcontroller responsible for real-time control of sensors, motors, and cleaning logic execution |
+| **ESP8266 WiFi Module (ESP-01)** | Handles IoT communication using MQTT protocol and connects robot to cloud/dashboard |
+| **HC-SR04 Ultrasonic Sensor** | Detects front obstacles by measuring distance for collision avoidance |
+| **IR Obstacle Sensors (Left & Right)** | Detect nearby side obstacles for real-time directional correction |
+| **IR Edge Sensor** | Detects ground edges or drops to prevent falling/stair accidents |
+| **L298N Motor Driver** | Controls DC motor direction and speed for robot movement (forward, backward, turning) |
+| **DC Gear Motors (x2)** | Provide locomotion and movement of the robot chassis |
+| **Servo Motor** | Performs scanning motion for left/right environmental detection during obstacle avoidance |
+| **Relay Module (2-Channel Active LOW)** | Controls high-power cleaning components (pump and mop motor) safely |
+| **Water Pump (12V)** | Supplies water for wet cleaning phase during cleaning cycle |
+| **Mop Motor / Roller System** | Performs physical mopping action during cleaning stage |
+| **Suction Fan (Vacuum System)** | Collects dust and fine particles during sweeping phase |
+| **Buzzer** | Provides audio feedback at the end of cleaning cycles or system alerts |
+| **Power Supply (12V Battery Pack)** | Supplies power to motors, pump, and cleaning system |
+| **Voltage Regulation Circuit (Arduino 5V line)** | Provides stable 5V supply to microcontroller and sensors |
+| **MQTT Cloud (HiveMQ)** | Enables real-time communication between robot and web dashboard |
+| **Web Dashboard (HTML/CSS/JS)** | User interface for manual control, mode switching, and monitoring |
+| **MobileNetV2 AI Model** | Performs real-time waste classification (plastic, glass, metal, paper, etc.) |
+
+
+---
+## 🔌 Hardware Implementation
+<table>
+  <tr>
+    <td>
+      <img src="Photos/side_view.jpeg" width="400"/>
+    </td>
+    <td>
+      <img src="Photos/plan_view.jpeg" width="270"/>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🚀 How to Run / Deploy the System
+
+
+### 1. Firmware Upload (Arduino)
+
+- Connect the Arduino Uno to your PC using a USB cable  
+- Open the project in Arduino IDE  
+- Install required library: `Servo.h`  
+- Select board: **Arduino Uno**  
+- Choose correct COM port  
+- Click **Upload** to flash firmware  
+
+---
+
+### 2. MQTT Cloud Configuration (HiveMQ)
+
+The system uses MQTT for real-time communication.
+
+- Create an account on **HiveMQ Cloud**
+- Create a cluster and generate credentials
+- Update ESP8266 code:
+
+```cpp
+const char* mqtt_server = "your_broker_url";
+const int   mqtt_port   = 8883;
+const char* mqtt_user   = "robot_admin";
+const char* mqtt_pass   = "Robot@2026";
+```
+
+- Upload updated code to ESP8266
+
+---
+
+### 3. AI System Setup (Waste Classification)
+
+- Install Python 3.10+
+- Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+- Place trained model file:
+  - `recycle_model_clean.keras`
+
+inside the project directory
+
+---
+
+### 4. Run AI Application
+
+Start Streamlit dashboard:
+
+```bash
+streamlit run app.py
+```
+
+### Features:
+- Live camera waste detection  
+- Image upload classification  
+- Real-time confidence scores  
+
+---
+
+### 5. Web Control Dashboard (Manual Mode)
+
+- Open web dashboard in browser  
+- Login using configured password  
+- Connect to MQTT broker  
+- Control robot in real time:
+  - Forward / Backward / Left / Right / Stop  
+  - Switch between Manual and Auto modes  
+  - Monitor system status  
+
+---
+
+### 6. System Execution Workflow
+
+Once all components are running:
+
+- Arduino Uno → Handles real-time sensor reading and motor control  
+- ESP8266 → Manages MQTT communication  
+- AI System → Performs waste classification  
+- Web Dashboard → Sends commands via cloud  
+
+The robot operates in two modes:
+- **Manual Mode** → Controlled by user via dashboard  
+- **Auto Mode** → Fully autonomous cleaning cycles  
+---
+
+## 👥 Project Team 
+- Sama Ahmed Amer
+- Sama Yasin Ali Jad 
+- Sarah Ayman Helmy
+- Nameer Reda
+- Rawda Ibrahim
+- Hanaa Sallam
+
+
+#### **Department & Institution:** Electronics and Communication Engineering Department, Faculty of Engineering, Tanta University
+
+#### **Academic Year**: 2025 / 2026
