@@ -43,8 +43,11 @@ The diagram below presents the hardware architecture and subsystem interconnecti
 The robot supports two operational modes controlled remotely through the MQTT cloud dashboard.
 
 
+<div style="display: flex; align-items: flex-start; gap: 20px;">
 
-### 1️⃣ Manual Mode
+  <div style="flex: 2;">
+
+  ### 1️⃣ Manual Mode
 
 In **Manual Mode**, the user can directly control the robot movement and cleaning modules through the web dashboard interface.
 
@@ -63,6 +66,13 @@ This mode is mainly used for:
 - Manual cleaning operation
 
 
+
+  </div>
+
+  <div style="flex: 2;">
+     <img src="Photos/Flowchart.jpg" width="370"/>
+  </div>
+</div>
 
 ### 2️⃣ Autonomous Mode
 
@@ -84,7 +94,8 @@ The robot continuously monitors its surroundings using:
 - Obstacles are avoided using real-time distance evaluation.
 - The robot dynamically changes direction based on sensor feedback.
 
-
+▶️ **Watch Demo:**  
+[Watch Video](videos/avoidnace.mp4)
 
 #### 🧼 Multi-Stage Cleaning Cycle
 
@@ -104,11 +115,10 @@ At the end of each cleaning cycle:
 - A buzzer alert is triggered
 - The robot returns to autonomous navigation mode
 
+▶️ **Watch Demo:**  
+[Watch Video](videos/avoidnace&cycle.mp4)
 
 
-<p align="center">
-  <img src="Flowchart.jpg" alt="System Firmware Execution Flowchart" width="500">
-</p>
 
 ---
 
@@ -156,7 +166,7 @@ Sends robot status updates to the dashboard:
 
   </div>
   <div style="flex: 2;">
-    <img src="communication_flowchart.png" width="150"/>
+    <img src="Photos/communication_flowchart.png" width="150"/>
   </div>
 
 </div>
@@ -167,11 +177,11 @@ Sends robot status updates to the dashboard:
 <div style="display: flex; align-items: flex-start; gap: 20px;">
 
   <div style="flex: 2;">
-    <img src="site_photo.png" width="370"/>
+    <img src="Photos/site_photo.png" width="370"/>
   </div>
 
   <div style="flex: 2;">
-     <img src="site_photo_2.png" width="370"/>
+     <img src="Photos/site_photo_2.png" width="370"/>
   </div>
 </div>
 
@@ -181,13 +191,13 @@ Sends robot status updates to the dashboard:
 The electrical subsystem interconnections, hardware dependencies, and module abstractions are validated prior to physical prototyping development.
 
 <p align="center">
-  <img src="simulation_circuit.jpg" alt="System Circuit Schematic Simulation" width="700">
+  <img src="Photos/simulation_circuit.jpg" alt="System Circuit Schematic Simulation" width="700">
 </p>
 
 ---
 ## 🧠 AI Waste Classification Model (Software Layer)
 
-### **System Overview**
+### **AI System Overview**
 - **Recycle Waste Classifier**: Real-time waste classification system using Deep Learning & Computer Vision
 - Classifies waste into: **Plastic, Glass, Metal, Paper, Shoes/Other**
 - Built with **TensorFlow** and integrated into **Streamlit** web application
@@ -199,6 +209,12 @@ The electrical subsystem interconnections, hardware dependencies, and module abs
 - Result: Significant improvement to **~90%+ accuracy**, faster training, and better stability
 
 ---
+
+
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+
+  <div style="flex: 2;">
+
 ### **Deep Learning Model**
 - Used **MobileNetV2** with Transfer Learning (pre-trained on ImageNet)
 - **Why MobileNetV2?**
@@ -213,26 +229,46 @@ base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='
 GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_classes, softmax)
 ```
 
+  **Training Results**
+  - Train Accuracy: **95.78%**
+  - **Validation Accuracy**: **90.06%**
+  </div>
 
-#### **Training Results**
-
-- **Train Accuracy**: **95.78%**
-- **Validation Accuracy**: **90.06%**
+  <div style="flex: 2;">
+     <img src="Photos/AI_comparasion.jpg" alt="System Circuit Schematic Simulation" width="400">
+  </div>
+</div>
 
 ---
+<div style="display: flex; align-items: flex-start; gap: 20px;">
 
-### **Streamlit Web Interface**
+  <div style="flex: 2;">
 
- Supports: Image upload, Live camera detection, Confidence scores
+  ### **Streamlit Web Interface**
+- Supports: Image upload, Live camera detection, Confidence scores
 - Clean and interactive UI
 - Displays prediction + probability distribution
 
 **System Examples:**
 
 
+
 - **Paper** → Confidence: **0.66**
 - **Glass** → Confidence: **0.88**
 - **Plastic** → Confidence: **1.00**
+
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+
+  <div style="flex: 2;">
+    <img src="Photos/AI_1.jpg" width="350"/>
+  </div>
+
+  <div style="flex: 2;">
+     <img src="Photos/AI_2.jpg" width="450"/>
+  </div>
+</div>
+
+
 
 ---
 
@@ -241,6 +277,10 @@ GlobalAveragePooling2D() → Dense(128, relu) → Dropout(0.3) → Dense(num_cla
 - Applied **Frame Skipping** (`if frame_count % 10 == 0`) to reduce latency
 - Achieved stable live classification
 
+This video shows real-time waste classification using the live camera stream with MobileNetV2.
+
+▶️ **Watch Demo:**  
+[Watch Video](videos/AI.mp4)
 ---
 
 ### **Cloud Communication (MQTT)**
@@ -264,15 +304,6 @@ mqtt_client.publish("material", predicted_label)
 | Real-Time Performance    | Poor           | **Optimized**            |
 
 ---
-
-
-
-  
-
-
-
-
-
 
 ## 🔌 Hardware Components & System Roles
 
@@ -303,11 +334,11 @@ mqtt_client.publish("material", predicted_label)
 <div style="display: flex; align-items: flex-start; gap: 20px;">
 
   <div style="flex: 1;">
-    <img src="side_view.jpeg" width="400"/>
+    <img src="Photos/side_view.jpeg" width="400"/>
   </div>
 
   <div style="flex: 1;">
-     <img src="plan_view.jpeg" width="300"/>
+     <img src="Photos/plan_view.jpeg" width="300"/>
   </div>
 </div>
 
