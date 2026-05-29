@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robot Dashboard</title>
+
+<!-- MQTT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:15px;
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+}
+
+.login-screen{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+.login-box{
+    width:300px;
+    background:#1e293b;
+    padding:25px;
+    border-radius:15px;
+    border:1px solid #334155;
+    text-align:center;
+}
+
+.login-box input{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#e5e7eb;
+}
+
+.login-box button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    cursor:pointer;
+}
+
+.dashboard{
+    display:none;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+@media(max-width:768px){
+    .layout{
+        grid-template-columns:1fr;
+    }
+}
+
+.column{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.card{
+    background:#1e293b;
+    padding:15px;
+    border-radius:15px;
+    border:1px solid #334155;
+}
+
+.inner-section{
+    margin-top:15px;
+    padding:15px;
+    background:#0f172a;
+    border-radius:12px;
+    border:1px solid #334155;
+}
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.mini{
+    background:#0f172a;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #334155;
+    text-align:center;
+}
+
+.auto-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.auto-row select,
+.auto-row input{
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#e5e7eb;
+}
+
+.start-btn{
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#22c55e;
+    color:white;
+    cursor:pointer;
+}
+
+.control-btn{
+    width:70px;
+    height:38px;
+    background:#3b82f6;
+    color:white;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.stop{
+    background:#ef4444;
+}
+
+.dpad{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+.middle-row{
+    display:flex;
+    gap:10px;
+}
+
+.active-mode{
+    background:#3b82f6 !important;
+}
+
+.disabled-section{
+    opacity:0.3;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-screen" id="loginScreen">
+
+<div class="login-box">
+
+<h2>🔐 Login</h2>
+
+<input type="password"
+id="password"
+placeholder="Enter Password">
+
+<button onclick="login()">Login</button>
+
+<p id="loginError"></p>
+
+</div>
+</div>
+
+<!-- DASHBOARD -->
+
+<div class="dashboard" id="dashboard">
+
+<h1>🤖 Smart Robot Dashboard</h1>
+
+<div class="layout">
+
+<!-- LEFT -->
+
+<div class="column">
+
+<!-- STATUS -->
+
+<div class="card">
+
+<h2>Status</h2>
+
+<div class="grid2">
+
+<div class="mini">
+Battery<br>96%
+</div>
+
+<div class="mini">
+Mode<br><span id="statusMode">Manual</span>
+</div>
+
+</div>
+</div>
+
+<!-- CONTROL PANEL -->
+
+<div class="card">
+
+<h2>Control Panel</h2>
+
+<!-- SYSTEM MODE -->
+
+<div class="inner-section">
+
+<h3>System Mode</h3>
+
+<div class="auto-row">
+
+<button class="start-btn"
+id="manualModeBtn"
+onclick="setSystemMode('manual')">
+Manual
+</button>
+
+<button class="start-btn"
+id="autoModeBtn"
+onclick="setSystemMode('auto')">
+Auto
+</button>
+
+</div>
+
+<p id="systemModeStatus">
+Current: MANUAL
+</p>
+
+</div>
+
+<!-- MANUAL CONTROL -->
+
+<div class="inner-section" id="manualSection">
+
+<h3>Manual Control</h3>
+
+<div class="dpad">
+
+<button class="control-btn"
+onclick="moveRobot('forward')">
+Forward⬆
+</button>
+
+<div class="middle-row">
+
+<button class="control-btn"
+onclick="moveRobot('left')">
+Left⬅
+</button>
+
+<button class="control-btn stop"
+onclick="moveRobot('stop')">
+Stop⛔
+</button>
+
+<button class="control-btn"
+onclick="moveRobot('right')">
+Right➡
+</button>
+
+</div>
+
+<button class="control-btn"
+onclick="moveRobot('back')">
+Backward⬇
+</button>
+
+</div>
+
+</div>
+
+<!-- AUTO -->
+
+<div class="inner-section" id="autoSection">
+
+<h3>Auto Mode</h3>
+
+<div class="auto-row">
+
+<select id="autoSelect">
+
+<option value="">Select</option>
+<option value="30">30 Min</option>
+<option value="60">1 Hour</option>
+<option value="120">2 Hours</option>
+
+</select>
+
+<input type="number"
+id="customTime"
+placeholder="Minutes">
+
+</div>
+
+<button class="start-btn"
+onclick="startAuto()">
+Start
+</button>
+
+<p id="result"></p>
+
+</div>
+
+<!-- FEATURE -->
+
+<div class="inner-section"
+id="modeControlSection">
+
+<h3>Mop Control</h3>
+
+<button class="start-btn"
+id="mopBtn"
+onclick="selectMode('mop')">
+Mop Mode
+</button>
+
+<p id="modeStatus">
+Current Mode: None
+</p>
+
+</div>
+
+</div>
+
+<!-- SETTINGS -->
+
+<div class="card">
+
+<h2>Settings</h2>
+
+<div class="inner-section">
+
+<h3>Change Password</h3>
+
+<input type="password"
+id="oldPass"
+placeholder="Current Password">
+
+<input type="password"
+id="newPass"
+placeholder="New Password">
+
+<button class="start-btn"
+onclick="changePassword()">
+Save Password
+</button>
+
+<p id="passMsg"></p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="column"></div>
+
+</div>
+</div>
+
+<script>
+
+/* ================= MQTT ================= */
+
+const MQTT_CONFIG = {
+
+
+    host:"YOUR_BROKER",
+
+    port:8884,
+
+    user:"YOUR_USERNAME",
+
+    pass:"YOUR_PASSWORD"
+};
+
+let mqttClient;
+
+let systemMode = "manual";
+
+/* CONNECT MQTT */
+
+function connectMQTT(){
+
+    mqttClient = new Paho.MQTT.Client(
+
+        MQTT_CONFIG.host,
+
+        Number(MQTT_CONFIG.port),
+
+        "Web_" + Math.random()
+    );
+
+    mqttClient.onConnectionLost = ()=>{
+
+        setTimeout(connectMQTT,3000);
+    };
+
+    mqttClient.connect({
+
+        useSSL:true,
+
+        userName:MQTT_CONFIG.user,
+
+        password:MQTT_CONFIG.pass,
+
+        onSuccess:()=>{
+
+            console.log("MQTT Connected");
+        },
+
+        onFailure:(e)=>{
+
+            console.log("MQTT Failed",e);
+        }
+    });
+}
+
+/* SEND MQTT */
+
+function sendMQTT(topic,msg){
+
+    if(mqttClient && mqttClient.isConnected()){
+
+        let m = new Paho.MQTT.Message(msg);
+
+        m.destinationName = topic;
+
+        mqttClient.send(m);
+    }
+}
+
+/* LOGIN */
+
+let savedPassword =
+localStorage.getItem("robotPass") || "1234";
+
+function login(){
+
+    let pass =
+    document.getElementById("password").value;
+
+    if(pass === savedPassword){
+
+        document.getElementById("loginScreen")
+        .style.display = "none";
+
+        document.getElementById("dashboard")
+        .style.display = "block";
+
+        connectMQTT();
+
+    }else{
+
+        document.getElementById("loginError")
+        .innerText = "Wrong password";
+    }
+}
+
+/* PASSWORD */
+
+function changePassword(){
+
+    let oldPass =
+    document.getElementById("oldPass").value;
+
+    let newPass =
+    document.getElementById("newPass").value;
+
+    if(oldPass !== savedPassword){
+
+        document.getElementById("passMsg")
+        .innerText = "Wrong current password";
+
+        return;
+    }
+
+    savedPassword = newPass;
+
+    localStorage.setItem("robotPass", newPass);
+
+    document.getElementById("passMsg")
+    .innerText = "Password updated";
+}
+
+/* MOVE */
+
+function moveRobot(dir){
+
+    sendMQTT("robot/move", dir);
+}
+
+/* AUTO */
+
+function startAuto(){
+
+    let s =
+    document.getElementById("autoSelect").value;
+
+    let c =
+    document.getElementById("customTime").value;
+
+    let time = c || s;
+
+    if(!time){
+
+        alert("Choose time");
+
+        return;
+    }
+
+    sendMQTT("robot/autoStart", time);
+
+    document.getElementById("result")
+    .innerText =
+    "Robot running for " + time + " minutes";
+}
+
+/* FEATURE */
+
+function selectMode(mode){
+
+    document.getElementById("mopBtn")
+    .classList.add("active-mode");
+
+    document.getElementById("modeStatus")
+    .innerText =
+    "Current Mode: MOP";
+
+    sendMQTT("robot/feature", mode);
+}
+
+/* SYSTEM MODE */
+
+function setSystemMode(mode){
+
+    systemMode = mode;
+
+    let manual =
+    document.getElementById("manualSection");
+
+    let auto =
+    document.getElementById("autoSection");
+
+    document.getElementById("manualModeBtn")
+    .classList.remove("active-mode");
+
+    document.getElementById("autoModeBtn")
+    .classList.remove("active-mode");
+
+    if(mode === "manual"){
+
+        document.getElementById("manualModeBtn")
+        .classList.add("active-mode");
+
+        manual.classList.remove("disabled-section");
+
+        auto.classList.add("disabled-section");
+    }
+
+    if(mode === "auto"){
+
+        document.getElementById("autoModeBtn")
+        .classList.add("active-mode");
+
+        auto.classList.remove("disabled-section");
+
+        manual.classList.add("disabled-section");
+    }
+
+    document.getElementById("statusMode")
+    .innerText =
+    mode.toUpperCase();
+
+    document.getElementById("systemModeStatus")
+    .innerText =
+    "Current: " + mode.toUpperCase();
+
+    sendMQTT("robot/systemMode", mode);
+}
+
+</script>
+
+</body>
+</html>
+
