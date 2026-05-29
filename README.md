@@ -232,7 +232,7 @@ The electrical subsystem interconnections, hardware dependencies, and module abs
     </td>
 
     <td>
-      <img src="Photos/AI_comparasion.jpg" width="500"/>
+      <img src="Photos/AI_comparasion.jpg" width="650"/>
     </td>
   </tr>
 </table>
