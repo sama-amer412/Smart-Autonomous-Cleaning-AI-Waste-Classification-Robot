@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>♻️ Smart Recycle AI</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f3f5f7;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .live-btn { background: #2ecc71; color: white; }
+        .upload-btn { background: #3498db; color: white; }
+
+        .card {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            width: 800px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        img {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .item {
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .item img {
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .badge {
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        #uploadSection, #liveSection {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>♻️ Smart Recycle AI</h1>
+
+<button class="btn live-btn" onclick="showLive()">🎥 Live Camera</button>
+<button class="btn upload-btn" onclick="showUpload()">📷 Upload Images</button>
+
+<!-- LIVE -->
+<div id="liveSection" class="card">
+    <h2>Live Camera</h2>
+    <img src="/video">
+</div>
+
+<!-- UPLOAD -->
+<div id="uploadSection" class="card">
+
+    <h2>Upload up to 3 images</h2>
+
+    <input type="file" id="files" multiple accept="image/*">
+    <button onclick="upload()">Analyze</button>
+
+    <div id="results"></div>
+</div>
+
+<script>
+function showLive() {
+    document.getElementById("liveSection").style.display = "block";
+    document.getElementById("uploadSection").style.display = "none";
+}
+
+function showUpload() {
+    document.getElementById("uploadSection").style.display = "block";
+    document.getElementById("liveSection").style.display = "none";
+}
+
+function upload() {
+    let files = document.getElementById("files").files;
+    let formData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+    }
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        let filesInput = document.getElementById("files").files;
+
+        let html = `<div class="preview">`;
+
+        data.forEach((r, i) => {
+
+            let url = URL.createObjectURL(filesInput[i]);
+
+            let icon = "♻️";
+            let color = "black";
+
+            if (r.label === "plastic") { icon = "⚠️"; color = "red"; }
+            if (r.label === "paper") { icon = "📄"; color = "blue"; }
+            if (r.label === "glass") { icon = "🍾"; color = "green"; }
+            if (r.label === "metal") { icon = "🔩"; color = "gray"; }
+
+            html += `
+                <div class="item">
+                    <img src="${url}">
+                    <div class="badge" style="color:${color}">
+                        ${icon} ${r.label} (${r.confidence.toFixed(2)})
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+
+        document.getElementById("results").innerHTML = html;
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+- Python 3.10+
+- Arduino IDE
+- Streamlit
+- TensorFlow
+- OpenCV
+- NumPy
+- PIL (Pillow)
+- streamlit-webrtc
+- paho-mqtt
